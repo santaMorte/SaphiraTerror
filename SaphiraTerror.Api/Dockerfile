@@ -6,7 +6,7 @@ WORKDIR /src
 COPY . .
 
 # Publica a aplicação
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish SaphiraTerror.Api/SaphiraTerror.Api.csproj -c Release -o /app/publish
 
 # Etapa 2 - runtime
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
