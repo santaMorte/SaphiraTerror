@@ -1,15 +1,14 @@
-# build stage
+# Etapa 1 - build
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 COPY . .
 
-WORKDIR /src/SaphiraTerror.Api
-RUN dotnet restore
+# aponta EXATAMENTE o csproj (sem depender de WORKDIR)
+RUN dotnet restore "./SaphiraTerror.Api/SaphiraTerror.Api.csproj"
+RUN dotnet publish "./SaphiraTerror.Api/SaphiraTerror.Api.csproj" -c Release -o /app/publish
 
-RUN dotnet publish -c Release -o /app/publish
-
-# runtime stage
+# Etapa 2 - runtime
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 
