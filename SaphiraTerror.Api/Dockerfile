@@ -4,8 +4,8 @@ WORKDIR /src
 
 COPY . .
 
-RUN dotnet restore "SaphiraTerror.Api/SaphiraTerror.Api.csproj"
-RUN dotnet publish "SaphiraTerror.Api/SaphiraTerror.Api.csproj" -c Release -o /app/publish
+RUN dotnet restore "SaphiraTerror.Api.csproj"
+RUN dotnet publish "SaphiraTerror.Api.csproj" -c Release -o /app/publish
 
 # Etapa 2 - runtime
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
