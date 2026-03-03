@@ -1,0 +1,199 @@
+﻿@* @{
+    ViewData["Title"] = "Home";
+}
+<section class="py-5 text-center">
+    <h1 class="display-4 fw-bold">SaphiraTerror</h1>
+    <p class="lead mt-3">Catálogo de filmes de terror — robusto, simples e escalável.</p>
+    <a class="btn btn-primary btn-lg mt-3" href="@Url.Action("Catalog", "Home")">Ver Catálogo</a>
+</section> *@
+
+
+@* //refatorado fase4 *@
+
+@* @model SaphiraTerror.Web.Models.CatalogPageVm *@
+@* @{ *@
+@*     var f = Model.Filter; var result = Model.PageResult!; *@
+@* } *@
+
+@* <section id="home" class="p-5 text-center bg-body-tertiary rounded-3 mb-5"> *@
+@*     <h1 class="display-5 fw-bold">SaphiraTerror</h1> *@
+@*     <p class="col-lg-8 mx-auto fs-5">Catálogo de filmes de terror, filtros rápidos e tema dark/light.</p> *@
+@*     <a class="btn btn-primary btn-lg" href="#genres">Ver Catálogo</a> *@
+@* </section> *@
+
+@* <section id="about" class="mb-5"> *@
+@*     <h2>Sobre</h2> *@
+@*     <p> *@
+@*         Projeto didático em camadas (Domain, Application, Infrastructure, API e Web) com EF Core + SQL Server, *@
+@*         filtros/ordenação e paginação. Navegação one-page para UX mais direta. *@
+@*     </p> *@
+@* </section> *@
+
+@* <section id="genres" class="mb-4"> *@
+@*     <h2 class="mb-3">Gêneros</h2> *@
+@*     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3"> *@
+@*         @foreach (var g in Model.Generos) *@
+@*         { *@
+@*             <div class="col"> *@
+@*                 <div class="card h-100"> *@
+@*                     <div class="card-body d-flex flex-column"> *@
+@*                         <h5 class="card-title">@g.Nome</h5> *@
+@*                         <p class="card-text text-secondary small">Clique para filtrar o catálogo por este gênero.</p> *@
+@*                         <button class="btn btn-outline-primary mt-auto genre-card" data-genre="@g.Id"> *@
+@*                             Filtrar @g.Nome *@
+@*                         </button> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             </div> *@
+@*         } *@
+@*     </div> *@
+@* </section> *@
+
+@* <section id="catalog" class="mt-5"> *@
+@*     @await Html.PartialAsync("_CatalogSection", Model) *@
+@* </section> *@
+
+@* <footer class="site-footer mt-5 pt-4 border-top"> *@
+@*     <div class="row align-items-center gy-3"> *@
+@*         <div class="col-12 col-md-4 d-flex align-items-center gap-2"> *@
+@*             <span class="logo-mini">S</span> *@
+@*             <span class="brand-mini">SaphiraTerror</span> *@
+@*         </div> *@
+@*         <div class="col-6 col-md-4"> *@
+@*             <h6 class="mb-2">Mapa do site</h6> *@
+@*             <ul class="list-unstyled d-grid gap-1"> *@
+@*                 <li><a href="#home">Home</a></li> *@
+@*                 <li><a href="#about">Sobre</a></li> *@
+@*                 <li><a href="#genres">Gêneros</a></li> *@
+@*                 <li><a href="#catalog">Catálogo</a></li> *@
+@*                 <li><a href="/Auth/Login">Área restrita</a></li> *@
+@*             </ul> *@
+@*         </div> *@
+@*         <div class="col-6 col-md-4 text-md-end"> *@
+@*             <small class="muted">© @DateTime.UtcNow.Year SaphiraTerror — Projeto didático</small> *@
+@*         </div> *@
+@*     </div> *@
+@* </footer> *@
+
+@* @section Scripts { *@
+@*     <script> *@
+@*         (() => { *@
+@*           // queremos manter #genres no topo quando section=genres OU hash=genres *@
+@*           const wantSection = '@(ViewBag.Section ?? "")'; *@
+@*           const wantGenres = wantSection === 'genres' || location.search.includes('section=genres') || location.hash === '#genres'; *@
+
+@*           if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; *@
+
+@*           function scrollToGenresOnce() { *@
+@*             const el = document.getElementById('genres'); if (!el) return; *@
+@*             const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 64; *@
+@*             const y = el.getBoundingClientRect().top + window.pageYOffset - navH - 12; *@
+@*             window.scrollTo(0, y); *@
+@*           } *@
+
+@*           // Tenta estabilizar a posição algumas vezes (contra carregamentos tardios) *@
+@*           function ensureGenresTop(retries=14) { *@
+@*             scrollToGenresOnce(); *@
+@*             if (retries <= 0) return; *@
+@*             setTimeout(() => { *@
+@*               const top = document.getElementById('genres').getBoundingClientRect().top; *@
+@*               const target = (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 64) + 12; *@
+@*               if (Math.abs(top - target) > 2) ensureGenresTop(retries - 1); *@
+@*             }, 60); *@
+@*           } *@
+
+@*           if (wantGenres) { *@
+@*             requestAnimationFrame(scrollToGenresOnce); *@
+@*             window.addEventListener('load', () => ensureGenresTop()); *@
+@*             // se imagens carregarem depois, reposiciona *@
+@*             document.getElementById('catalog')?.addEventListener('load', (e) => { *@
+@*               if (e.target?.tagName === 'IMG') ensureGenresTop(6); *@
+@*             }, true); *@
+@*           } *@
+
+@*           // Card de gênero -> submit sem hash; section=genres decide a rolagem *@
+@*           const indexUrl = '@Url.Action("Index", "Home")'; *@
+@*           document.querySelectorAll('.genre-card').forEach(btn=>{ *@
+@*             btn.addEventListener('click', e=>{ *@
+@*               e.preventDefault(); *@
+@*               const form = document.getElementById('catalogForm'); *@
+@*               form.action = indexUrl; *@
+@*               form.querySelector('input[name="GeneroId"]').value = btn.dataset.genre; *@
+@*               form.querySelector('input[name="Page"]').value = 1; *@
+@*               form.querySelector('input[name="section"]').value = 'genres'; *@
+@*               form.submit(); *@
+@*             }); *@
+@*           }); *@
+@*         })(); *@
+@*     </script> *@
+@* } *@
+
+
+            @* refatorado fase 5 *@
+
+@model SaphiraTerror.Web.Models.CatalogPageVm
+@{
+    ViewData["Title"] = "Catálogo";
+    var f = Model.Filter;
+    var result = Model.PageResult!;
+}
+
+<section id="home" class="p-5 text-center bg-body-tertiary rounded-3 mb-5">
+    <h1 class="display-5 fw-bold">SaphiraTerror</h1>
+    <p class="col-lg-8 mx-auto fs-5">Catálogo de filmes de terror, filtros rápidos e tema dark/light.</p>
+    <a class="btn btn-primary btn-lg" href="#genres">Ver Catálogo</a>
+</section>
+
+<section id="about" class="mb-5">
+    <h2>Sobre</h2>
+    <p>
+        Projeto didático em camadas (Domain, Application, Infrastructure, API e Web) com EF Core + SQL Server,
+        filtros/ordenação e paginação. Navegação one-page.
+    </p>
+</section>
+
+<section id="genres" class="mb-4">
+    <h2 class="mb-3">Gêneros</h2>
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+        @foreach (var g in Model.Generos)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@g.Nome</h5>
+                        <p class="card-text text-secondary small">Clique para filtrar o catálogo por este gênero.</p>
+                        <button class="btn btn-outline-primary mt-auto genre-card" data-genre="@g.Id">
+                            Filtrar @g.Nome
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<section id="catalog" class="mt-5">
+    @await Html.PartialAsync("_CatalogSection", Model)
+</section>
+
+<footer class="site-footer mt-5 pt-4 border-top">
+    <div class="row align-items-center gy-3">
+        <div class="col-12 col-md-4 d-flex align-items-center gap-2">
+            <span class="logo-mini">S</span>
+            <span class="brand-mini">SaphiraTerror</span>
+        </div>
+        <div class="col-6 col-md-4">
+            <h6 class="mb-2">Mapa do site</h6>
+            <ul class="list-unstyled d-grid gap-1">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">Sobre</a></li>
+                <li><a href="#genres">Gêneros</a></li>
+                <li><a href="#catalog">Catálogo</a></li>
+                <li><a href="/Auth/Login">Área restrita</a></li>
+            </ul>
+        </div>
+        <div class="col-6 col-md-4 text-md-end">
+            <small class="muted">© @DateTime.UtcNow.Year SaphiraTerror — Projeto didático</small>
+        </div>
+    </div>
+</footer>

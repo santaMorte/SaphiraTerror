@@ -1,0 +1,157 @@
+# SaphiraTerror.Application — Visão do Módulo (data: __/__/____)
+
+**Papel do projeto**  
+Camada **de aplicação** (orquestração de casos de uso).  
+Define **contratos** (interfaces), **DTOs**, **filtros** e **serviços** que a API e a Web consomem.  
+**Não** conhece EF Core nem detalhes de banco — isso fica na **Infrastructure**.
+
+---
+
+## ?? Estrutura
+
+SaphiraTerror.Application
+??? Abstractions
+? ??? Repositories
+? ??? IClassificacaoRepository.cs
+? ??? IFilmeRepository.cs
+? ??? IGeneroRepository.cs
+??? DTOs
+? ??? FilmeDto.cs
+? ??? Paging.cs
+??? Filters
+? ??? FilmeFilter.cs
+??? Services
+??? ICatalogLookupService.cs
+??? IFilmeQueryService.cs
+
+markdown
+Copiar código
+
+---
+
+## ?? Abstractions/Repositories (contratos)
+
+Interfaces que a **Infrastructure** implementa. A Application **depende** só desses contratos.
+
+### `IFilmeRepository`
+- **Responsabilidade**: consultar/paginar filmes.
+- **Operações típicas**:
+  - `Task<PagedResult<FilmeDto>> QueryAsync(FilmeFilter filter, CancellationToken ct)`
+  - `Task<FilmeDto?> GetByIdAsync(Guid id, CancellationToken ct)`
+
+### `IGeneroRepository`
+- **Responsabilidade**: listagem/lookup de gêneros.
+- **Operações típicas**:
+  - `Task<IReadOnlyList<Item>> GetAllAsync(CancellationToken ct)`
+
+### `IClassificacaoRepository`
+- **Responsabilidade**: listagem/lookup de classificações.
+- **Operações típicas**:
+  - `Task<IReadOnlyList<Item>> GetAllAsync(CancellationToken ct)`
+
+> **Item** pode ser um DTO leve `{ Id, Nome }` para preencher filtros no front.
+
+---
+
+## ?? DTOs
+
+### `FilmeDto`
+- **Para quem**: API/Web.  
+- **Campos** (exemplo): `Id`, `Titulo`, `Ano`, `GeneroId`, `GeneroNome`, `ClassificacaoId`, `ClassificacaoNome`, `Sinopse`, `CapaUrl`.
+
+### `Paging.cs`
+- **`PagedResult<T>`**: resultado de paginação (imutável/record).
+  - `Page`, `PageSize`, `Total`, `IReadOnlyList<T> Items`
+- Usado por controllers da **API** e telas da **Web** para renderizar paginação.
+
+---
+
+## ?? Filters
+
+### `FilmeFilter`
+- **Parâmetros** aceitos pela consulta:
+  - `GeneroId?`, `ClassificacaoId?`, `Ano?`
+  - `Q?` (busca em **título** e/ou **sinopse**)
+  - `Page`, `PageSize`
+  - `SortBy` (ex.: `"recentes" | "titulo" | "ano"`) e `Desc`
+- **Validações** leves (normalização de página/tamanho) — regras de banco ficam na Infra.
+
+---
+
+## ?? Services
+
+Serviços da **camada de aplicação** usados pela **API** e, em alguns cenários, pela **Web**.
+
+### `ICatalogLookupService`
+- **Entrega** listas para filtros:
+  - `Task<IReadOnlyList<Item>> GetGenerosAsync(CancellationToken ct)`
+  - `Task<IReadOnlyList<Item>> GetClassificacoesAsync(CancellationToken ct)`
+
+### `IFilmeQueryService`
+- **Entrega** catálogo e detalhes:
+  - `Task<PagedResult<FilmeDto>> GetCatalogAsync(FilmeFilter filter, CancellationToken ct)`
+  - `Task<FilmeDto?> GetDetailsAsync(Guid id, CancellationToken ct)`
+
+> Implementações concretas vivem na **Infrastructure** (ex.: `EfFilmeRepository`, `EfCatalogLookupService`).
+
+---
+
+## ?? Quem fala com quem?
+
+Web (MVC) ??
+API ??? usa Serviços da Application (IFilmeQueryService, ICatalogLookupService)
+?
+??? Serviços chamam Repositórios (IFilmeRepository, IGeneroRepository, IClassificacaoRepository)
+?
+Implementações ficam na Infrastructure (EF Core)
+
+markdown
+Copiar código
+
+- **Domain** fornece as entidades base.
+- **Application** define **o que** precisa.
+- **Infrastructure** define **como** buscar/persistir.
+
+---
+
+## ?? Fluxo típico (catálogo)
+
+1. **API** recebe query string ? monta `FilmeFilter`.
+2. Chama `IFilmeQueryService.GetCatalogAsync(filter, ct)`.
+3. Serviço chama `IFilmeRepository.QueryAsync(filter, ct)`.
+4. Infra (EF) executa a consulta, mapeia para **FilmeDto**, aplica paginação.
+5. **Application** retorna `PagedResult<FilmeDto>` para a API ? Web renderiza.
+
+---
+
+## ? Checklist rápido (Application ok)
+
+- [ ] **Sem** referências a EF Core/SqlClient.
+- [ ] **Contratos** (interfaces) claros e estáveis.
+- [ ] DTOs **somente dados** (sem lógica).
+- [ ] Filtros e paginação padronizados.
+- [ ] Serviços pequenos, focados em **use cases**.
+
+---
+
+## ?? Como estender
+
+- **Novo filtro** (ex.: `ClassificacaoMin`):
+  1) Adicione ao `FilmeFilter`.
+  2) Ajuste assinatura/uso no `IFilmeRepository.QueryAsync`.
+  3) Atualize implementação na **Infrastructure** e endpoints na **API**.
+
+- **Novo DTO** (ex.: `FilmeCardDto`):
+  1) Crie em `DTOs/`.
+  2) Exponha por um novo método no `IFilmeQueryService`.
+  3) Implemente na **Infrastructure** com projeção EF.
+
+---
+
+## ?? Convenções didáticas
+
+- **Application não conhece** `DbContext` — cobre **requisitos funcionais** (o que devolver e como paginar).
+- **Nomes batem** com a Web/API (ex.: `SortBy`, `Page`, `PageSize`).
+- **CancelationToken** sempre no fim da assinatura.
+
+---

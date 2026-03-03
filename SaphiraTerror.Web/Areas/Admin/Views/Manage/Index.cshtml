@@ -1,0 +1,92 @@
+﻿@* @{
+    ViewData["Title"] = "Gestão — Visão Geral";
+}
+<h2 class="mb-3">Gestão — Gerente/Admin</h2>
+<p class="text-secondary">Selecione um módulo para gerenciar. (CRUDs serão implementados na Fase 7.)</p>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">Filmes</h5>
+                <p class="text-secondary small">Cadastrar, editar e inativar filmes.</p>
+                <a class="btn btn-primary mt-auto" asp-action="Filmes">Abrir</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">Gêneros</h5>
+                <p class="text-secondary small">Manter lista de gêneros.</p>
+                <a class="btn btn-primary mt-auto" asp-action="Generos">Abrir</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">Classificações</h5>
+                <p class="text-secondary small">Faixas etárias de exibição.</p>
+                <a class="btn btn-primary mt-auto" asp-action="Classificacoes">Abrir</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">Usuários</h5>
+                <p class="text-secondary small">Controle de acesso e perfis.</p>
+                <a class="btn btn-primary mt-auto" asp-action="Usuarios">Abrir</a>
+            </div>
+        </div>
+    </div>
+</div> *@
+
+
+                @* refatorado fase 7 *@
+
+@{
+    ViewData["Title"] = "Gestão — Visão Geral";
+}
+<h2 class="mb-3">Gestão — Gerente/Admin</h2>
+<p class="text-secondary">Selecione um módulo para gerenciar. (CRUDs completos serão entregues por etapas nesta fase.)</p>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">Filmes</h5>
+                <p class="text-secondary small">Cadastrar, editar e excluir (apenas Admin) filmes.</p>
+                <a class="btn btn-primary mt-auto" asp-area="Admin" asp-controller="Filmes" asp-action="Index">Abrir</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">Gêneros</h5>
+                <p class="text-secondary small">Gerenciar lista de gêneros.</p>
+                <a class="btn btn-primary mt-auto" asp-action="Generos">Abrir</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">Classificações</h5>
+                <p class="text-secondary small">Gerenciar faixas etárias.</p>
+                <a class="btn btn-primary mt-auto" asp-action="Classificacoes">Abrir</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">Usuários</h5>
+                <p class="text-secondary small">Controle de acesso e perfis.</p>
+                <a class="btn btn-primary mt-auto" asp-action="Usuarios">Abrir</a>
+            </div>
+        </div>
+    </div>
+</div>

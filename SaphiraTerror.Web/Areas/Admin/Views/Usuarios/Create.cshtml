@@ -1,0 +1,80 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@model SaphiraTerror.Web.Areas.Admin.Models.UsuarioCreateVm
+@{
+    ViewData["Title"] = "Novo Usuário";
+    var roles = (IEnumerable<string>)(ViewBag.AllRoles ?? Array.Empty<string>());
+}
+
+<h1 class="mb-4">Novo Usuário</h1>
+
+<form asp-area="Admin"
+      asp-controller="Usuarios"
+      asp-action="Create"
+      method="post"
+      autocomplete="off">
+    @* desabilita autofill no form *@
+    @Html.AntiForgeryToken()
+
+    @* ---- Campos “isca” para segurar o autofill dos navegadores ---- *@
+    <input type="text"
+           name="fake_user"
+           id="fake_user"
+           autocomplete="username"
+           tabindex="-1"
+           aria-hidden="true"
+           style="position:absolute;left:-10000px;top:-10000px;width:0;height:0;opacity:0;" />
+    <input type="password"
+           name="fake_pass"
+           id="fake_pass"
+           autocomplete="current-password"
+           tabindex="-1"
+           aria-hidden="true"
+           style="position:absolute;left:-10000px;top:-10000px;width:0;height:0;opacity:0;" />
+    @* ---------------------------------------------------------------- *@
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email"
+               class="form-control"
+               autocomplete="off"
+               autocapitalize="none"
+               spellcheck="false" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="UserName" class="form-label">Username</label>
+        <input asp-for="UserName"
+               class="form-control"
+               autocomplete="off"
+               autocapitalize="none"
+               spellcheck="false" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password"
+               type="password"
+               class="form-control"
+               autocomplete="new-password" /> @* instrução explícita p/ senha nova *@
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="mb-4">
+        <label for="Role" class="form-label">Perfil</label>
+        <select asp-for="Role"
+                class="form-select"
+                asp-items="@(new SelectList(roles))">
+            <option value="">Selecione...</option>
+        </select>
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success me-2">Salvar</button>
+    <a asp-area="Admin" asp-controller="Usuarios" asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

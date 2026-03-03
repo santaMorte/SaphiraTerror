@@ -1,0 +1,44 @@
+﻿@* @model SaphiraTerror.Web.Areas.Admin.Models.FilmeEditVm
+@{
+    ViewData["Title"] = "Editar Filme";
+}
+<h2 class="mb-3">Editar Filme</h2>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <partial name="_Form" />
+    <div class="mt-3">
+        <button class="btn btn-primary" type="submit">Salvar</button>
+        <a class="btn btn-secondary ms-2" asp-action="Index">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} *@
+
+
+
+@* refatorado fase 08 *@
+
+@model SaphiraTerror.Web.Areas.Admin.Models.FilmeEditVm
+@{
+    ViewData["Title"] = "Editar Filme";
+}
+
+<h2 class="mb-3">Editar Filme</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <partial name="_Form" />
+    <div class="mt-3">
+        <button class="btn btn-primary" type="submit">Salvar</button>
+        <a class="btn btn-secondary ms-2" asp-action="Index">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

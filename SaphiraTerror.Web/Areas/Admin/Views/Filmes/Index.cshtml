@@ -1,0 +1,202 @@
+﻿@* @model SaphiraTerror.Web.Areas.Admin.Models.PagedResult<SaphiraTerror.Web.Areas.Admin.Models.FilmeRowVm>
+@using SaphiraTerror.Web.Areas.Admin.Models
+@{
+    ViewData["Title"] = "Gestão — Filmes";
+    var f = (FilmeListFilter)ViewBag.Filter;
+    var generos = (IEnumerable<dynamic>)ViewBag.Generos;
+    var classifs = (IEnumerable<dynamic>)ViewBag.Classificacoes;
+    var totalPages = Math.Max(1, (int)Math.Ceiling((double)Model.Total / Math.Max(1, Model.PageSize)));
+}
+
+<h2 class="mb-3">Gestão — Filmes</h2>
+
+@if (TempData["ok"] is string ok)
+{
+    <div class="alert alert-success">@ok</div>
+}
+
+<form method="get" class="row gy-2 gx-2 mb-3">
+    <div class="col-md-3">
+        <label class="form-label">Busca</label>
+        <input class="form-control" name="Q" value="@(f.Q ?? "")" placeholder="título ou sinopse..." />
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">Gênero</label>
+        <select class="form-select" name="GeneroId">
+            <option value="">Todos</option>
+            @foreach (var g in generos)
+            {
+                if (f.GeneroId == (int)g.Id)
+                {
+                    <option value="@g.Id" selected>@g.Nome</option>
+                }
+                else
+                {
+                    <option value="@g.Id">@g.Nome</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">Classificação</label>
+        <select class="form-select" name="ClassificacaoId">
+            <option value="">Todas</option>
+            @foreach (var c in classifs)
+            {
+                if (f.ClassificacaoId == (int)c.Id)
+                {
+                    <option value="@c.Id" selected>@c.Nome</option>
+                }
+                else
+                {
+                    <option value="@c.Id">@c.Nome</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">Ano</label>
+        <input type="number" class="form-control" name="Ano" value="@(f.Ano?.ToString() ?? "")" />
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">Ordenar</label>
+        <select class="form-select" name="SortBy">
+            @if (f.SortBy == "CreatedAt")
+            {
+                <option value="CreatedAt" selected>Recentes</option>
+            }
+            else
+            {
+                <option value="CreatedAt">Recentes</option>
+            }
+            @if (f.SortBy == "Titulo")
+            {
+                <option value="Titulo" selected>Título</option>
+            }
+            else
+            {
+                <option value="Titulo">Título</option>
+            }
+            @if (f.SortBy == "Ano")
+            {
+                <option value="Ano" selected>Ano</option>
+            }
+            else
+            {
+                <option value="Ano">Ano</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-1">
+        <label class="form-label">Desc</label><br />
+        <input type="checkbox" class="form-check-input" name="Desc" value="true" @(f.Desc ? "checked" : "") />
+    </div>
+
+    <div class="col-12">
+        <input type="hidden" name="Page" value="1" />
+        <input type="hidden" name="PageSize" value="@f.PageSize" />
+        <button class="btn btn-primary">Aplicar</button>
+        <a class="btn btn-secondary ms-2" href="@Url.Action("Index")">Limpar</a>
+        <a class="btn btn-success float-end" asp-action="Create">Novo filme</a>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr><th>Título</th><th>Ano</th><th>Gênero</th><th>Classificação</th><th class="text-end">Ações</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.Items)
+            {
+                <tr>
+                    <td>@r.Titulo</td>
+                    <td>@r.Ano</td>
+                    <td>@r.Genero</td>
+                    <td>@r.Classificacao</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@r.Id">Editar</a>
+                        @if (User.IsInRole("Admin") || User.IsInRole("ADMIN") || User.IsInRole("Administrador"))
+                        {
+                            <a class="btn btn-sm btn-outline-danger ms-1" asp-action="Delete" asp-route-id="@r.Id">Excluir</a>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (!Model.Items.Any())
+            {
+                <tr><td colspan="5" class="text-secondary">Nenhum registro encontrado.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<nav aria-label="Paginação">
+    <ul class="pagination">
+        <li class="page-item @(f.Page <= 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index", new { f.Q, f.GeneroId, f.ClassificacaoId, f.Ano, f.SortBy, f.Desc, Page = 1, f.PageSize })">&laquo;</a>
+        </li>
+        <li class="page-item @(f.Page <= 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index", new { f.Q, f.GeneroId, f.ClassificacaoId, f.Ano, f.SortBy, f.Desc, Page = f.Page - 1, f.PageSize })">Anterior</a>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link">Página @f.Page de @totalPages <span class="badge text-bg-secondary ms-2">total: @Model.Total</span></span>
+        </li>
+        <li class="page-item @(f.Page >= totalPages ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index", new { f.Q, f.GeneroId, f.ClassificacaoId, f.Ano, f.SortBy, f.Desc, Page = f.Page + 1, f.PageSize })">Próxima</a>
+        </li>
+        <li class="page-item @(f.Page >= totalPages ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index", new { f.Q, f.GeneroId, f.ClassificacaoId, f.Ano, f.SortBy, f.Desc, Page = totalPages, f.PageSize })">&raquo;</a>
+        </li>
+    </ul>
+</nav> *@
+
+
+
+        @* refatorado fase 08 *@
+
+
+@{
+    ViewData["Title"] = "Filmes";
+}
+
+<h2 class="mb-3">Filmes</h2>
+
+<p>
+    <a class="btn btn-success" asp-action="Create">Novo</a>
+</p>
+
+<table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Ano</th>
+            <th>Gênero</th>
+            <th>Classificação</th>
+            <th style="width: 260px;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var f in (IEnumerable<dynamic>)Model)
+        {
+            <tr>
+                <td>@f.Titulo</td>
+                <td>@f.Ano</td>
+                <td>@f.Genero</td>
+                <td>@f.Classificacao</td>
+                <td class="text-end">
+                    <a class="btn btn-outline-secondary btn-sm" asp-action="Details" asp-route-id="@f.Id">Detalhes</a>
+                    <a class="btn btn-primary btn-sm ms-1" asp-action="Edit" asp-route-id="@f.Id">Editar</a>
+                    <a class="btn btn-danger btn-sm ms-1" asp-action="Delete" asp-route-id="@f.Id">Excluir</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

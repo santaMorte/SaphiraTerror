@@ -1,0 +1,96 @@
+﻿@{
+    ViewData["Title"] = "Dashboard (Admin)";
+    var porRole = ViewBag.PorRole as System.Collections.Generic.Dictionary<string, int> ?? new();
+    var ultimos = ViewBag.Ultimos as System.Collections.Generic.List<SaphiraTerror.Web.Areas.Admin.Services.UltimoFilmeItem> ?? new();
+}
+
+<h2 class="mb-3">Dashboard — Admin</h2>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-secondary small">Total de filmes</div>
+                <div class="display-6">@ViewBag.TotalFilmes</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-secondary small">Total de gêneros</div>
+                <div class="display-6">@ViewBag.TotalGeneros</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-secondary small">Total de usuários</div>
+                <div class="display-6">@ViewBag.TotalUsuarios</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-secondary small">Usuários por perfil</div>
+                @foreach (var kv in porRole)
+                {
+                    <div class="d-flex justify-content-between"><span>@kv.Key</span><span class="fw-bold">@kv.Value</span></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-2">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Filmes por gênero</h5>
+                <canvas id="chartGenero"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Filmes por classificação</h5>
+                <canvas id="chartClass"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-1">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Filmes por ano</h5>
+                <canvas id="chartAno"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title mb-3">5 últimos filmes</h5>
+                <ol class="mb-0">
+                    @foreach (var f in ultimos)
+                    {
+                        <li class="mb-2">
+                            <div class="fw-bold">@f.Titulo</div>
+                            <div class="text-secondary small">@f.Genero · @f.Classificacao · @f.Ano</div>
+                        </li>
+                    }
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+}

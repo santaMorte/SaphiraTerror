@@ -1,0 +1,47 @@
+﻿@model SaphiraTerror.Web.Areas.Admin.Models.UsuarioEditVm
+@{
+    ViewData["Title"] = "Editar Usuário";
+    var roles = (IEnumerable<string>)(ViewBag.AllRoles ?? Array.Empty<string>());
+}
+<h2 class="mb-3">Editar Usuário</h2>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Perfil</label>
+        <select asp-for="Role" class="form-select">
+            @foreach (var r in roles)
+            {
+                if (string.Equals(r, Model.Role, StringComparison.OrdinalIgnoreCase))
+                {
+                    <option value="@r" selected>@r</option>
+                }
+                else
+                {
+                    <option value="@r">@r</option>
+                }
+            }
+        </select>
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+
+    <div class="mt-3">
+        <button class="btn btn-primary" type="submit">Salvar</button>
+        <a class="btn btn-secondary ms-2" asp-action="Index">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

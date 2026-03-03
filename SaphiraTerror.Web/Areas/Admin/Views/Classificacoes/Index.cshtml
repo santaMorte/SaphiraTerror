@@ -1,0 +1,77 @@
+﻿@model SaphiraTerror.Web.Areas.Admin.Models.PagedClassificacao
+@using SaphiraTerror.Web.Areas.Admin.Models
+@{
+    ViewData["Title"] = "Gestão — Classificações";
+    var f = (ClassificacaoListFilter)ViewBag.Filter;
+    var totalPages = Math.Max(1, (int)Math.Ceiling((double)Model.Total / Math.Max(1, Model.PageSize)));
+}
+<h2 class="mb-3">Gestão — Classificações</h2>
+
+@if (TempData["ok"] is string ok)
+{
+    <div class="alert alert-success">@ok</div>
+}
+@if (TempData["error"] is string err)
+{
+    <div class="alert alert-danger">@err</div>
+}
+
+
+<form method="get" class="row gy-2 gx-2 mb-3">
+    <div class="col-md-3">
+        <label class="form-label">Busca</label>
+        <input class="form-control" name="Q" value="@(f.Q ?? "")" placeholder="nome da classificação" />
+    </div>
+    <div class="col-12">
+        <input type="hidden" name="Page" value="1" />
+        <input type="hidden" name="PageSize" value="@f.PageSize" />
+        <button class="btn btn-primary">Aplicar</button>
+        <a class="btn btn-secondary ms-2" href="@Url.Action("Index")">Limpar</a>
+        <a class="btn btn-success float-end" asp-action="Create">Nova classificação</a>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead><tr><th>Nome</th><th class="text-end">Ações</th></tr></thead>
+        <tbody>
+            @foreach (var r in Model.Items)
+            {
+                <tr>
+                    <td>@r.Nome</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@r.Id">Editar</a>
+                        @if (User.IsInRole("Admin") || User.IsInRole("ADMIN") || User.IsInRole("Administrador"))
+                        {
+                            <a class="btn btn-sm btn-outline-danger ms-1" asp-action="Delete" asp-route-id="@r.Id">Excluir</a>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (!Model.Items.Any())
+            {
+                <tr><td colspan="2" class="text-secondary">Nenhuma classificação encontrada.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<nav aria-label="Paginação">
+    <ul class="pagination">
+        <li class="page-item @(f.Page <= 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index", new { f.Q, Page = 1, f.PageSize })">&laquo;</a>
+        </li>
+        <li class="page-item @(f.Page <= 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index", new { f.Q, Page = f.Page - 1, f.PageSize })">Anterior</a>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link">Página @f.Page de @totalPages <span class="badge text-bg-secondary ms-2">total: @Model.Total</span></span>
+        </li>
+        <li class="page-item @(f.Page >= totalPages ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index", new { f.Q, Page = f.Page + 1, f.PageSize })">Próxima</a>
+        </li>
+        <li class="page-item @(f.Page >= totalPages ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index", new { f.Q, Page = totalPages, f.PageSize })">&raquo;</a>
+        </li>
+    </ul>
+</nav>
