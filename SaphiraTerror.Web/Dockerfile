@@ -3,6 +3,10 @@ WORKDIR /src
 
 COPY . .
 
+RUN ls -la
+RUN find . -maxdepth 3 -name "*.csproj" -print
+
+
 RUN dotnet restore "SaphiraTerror.Web/SaphiraTerror.Web.csproj"
 RUN dotnet publish "SaphiraTerror.Web/SaphiraTerror.Web.csproj" -c Release -o /app/publish
 
