@@ -1,15 +1,13 @@
+# Etapa 1 - build
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 COPY . .
 
-RUN ls -la
-RUN find . -maxdepth 3 -name "*.csproj" -print
+RUN dotnet restore "SaphiraTerror.Web.csproj"
+RUN dotnet publish "SaphiraTerror.Web.csproj" -c Release -o /app/publish
 
-
-RUN dotnet restore "SaphiraTerror.Web/SaphiraTerror.Web.csproj"
-RUN dotnet publish "SaphiraTerror.Web/SaphiraTerror.Web.csproj" -c Release -o /app/publish
-
+# Etapa 2 - runtime
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 
